@@ -72,7 +72,7 @@ public class Gamereservation {
                  String EMAIL=rs.getString("EMAIL");
                  Date DOB = rs.getDate("DOB");
                 String newDate = dateFormatter(DOB);
-                 int PHONENUMBER=rs.getInt("PHONENUMBER");
+                 long PHONENUMBER=rs.getLong("PHONENUMBER");
                  String PASSWORD=rs.getString("PASSWORD");
                  String USER_ROLE=rs.getString("USER_ROLE");
                  String ACTIVE=rs.getString("ACTIVE");
@@ -133,7 +133,7 @@ public class Gamereservation {
                 String LASTNAME = rs.getString("LASTNAME");
                 String USER_ID = rs.getString("USER_ID");
                 String EMAIL = rs.getString("EMAIL");
-                int PHONENUMBER = rs.getInt("PHONENUMBER");
+                long PHONENUMBER = rs.getLong("PHONENUMBER");
                 Date DOB = rs.getDate("DOB");
                 String newDate = dateFormatter(DOB);
                 String USER_ROLE=rs.getString("USER_ROLE");
@@ -241,7 +241,7 @@ public class Gamereservation {
                 obj.accumulate("Timestmap", timenow);
                 String PASSWORD = rs.getString("PASSWORD");
                 String USER_ID = rs.getString("USER_ID");
-                int PHONENUMBER = rs.getInt("PHONENUMBER");
+                long PHONENUMBER = rs.getLong("PHONENUMBER");
                 obj.accumulate("UserName", USER_ID);
                 obj.accumulate("PhoneNumber", PHONENUMBER);
                 obj.accumulate("Password", PASSWORD);
@@ -297,7 +297,7 @@ public class Gamereservation {
                 String LASTNAME = rs.getString("LASTNAME");
                 String USER_ID = rs.getString("USER_ID");
                 String EMAIL = rs.getString("EMAIL");
-                int PHONENUMBER = rs.getInt("PHONENUMBER");
+                long PHONENUMBER = rs.getLong("PHONENUMBER");
                 Date DOB = rs.getDate("DOB");
                 String newDate = dateFormatter(DOB);
                 String USER_ROLE=rs.getString("USER_ROLE");
