@@ -75,7 +75,7 @@ public class Gamereservation {
                  long PHONENUMBER=rs.getLong("PHONENUMBER");
                  String PASSWORD=rs.getString("PASSWORD");
                  String USER_ROLE=rs.getString("USER_ROLE");
-                 String ACTIVE=rs.getString("ACTIVE");
+                 String ACTIVE=rs.getString("U_ACTIVE");
                         
                 obj.accumulate("Timestmap", timenow);
                 obj.accumulate("UserName", USER_ID);
@@ -86,7 +86,7 @@ public class Gamereservation {
                 obj.accumulate("Dob",newDate);
                 obj.accumulate("Password", PASSWORD);
                 obj.accumulate("Role", USER_ROLE);
-                obj.accumulate("Active", ACTIVE);
+                obj.accumulate("UserActive", ACTIVE);
 
             } else {
                 status = "wrong";
@@ -122,7 +122,7 @@ public class Gamereservation {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select * from USER_INFO where user_id='" + id + "' and password='" + pass + "'";
+            String sql = "select * from USER_INFO where U_ACTIVE='TRUE' and user_id='" + id + "' and password='" + pass + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -137,7 +137,7 @@ public class Gamereservation {
                 Date DOB = rs.getDate("DOB");
                 String newDate = dateFormatter(DOB);
                 String USER_ROLE=rs.getString("USER_ROLE");
-                 String ACTIVE=rs.getString("ACTIVE");
+                 String ACTIVE=rs.getString("U_ACTIVE");
                 obj.accumulate("UserName", USER_ID);
                 obj.accumulate("FirstName", FIRSTNAME);
                 obj.accumulate("LastName", LASTNAME);
@@ -146,7 +146,7 @@ public class Gamereservation {
                 obj.accumulate("Dob",newDate );
                 obj.accumulate("Password", pass);
                  obj.accumulate("Role", USER_ROLE);
-                obj.accumulate("Active", ACTIVE);
+                obj.accumulate("UserActive", ACTIVE);
 
             } else {
                 status = "wrong";
@@ -174,15 +174,15 @@ public class Gamereservation {
         return obj.toString();
     }
 
-    @Path("forgotpasswordemail&{Uid}&{Uemail}")
+    @Path("forgotpasswordemail&{Uemail}")
     @GET
     @Produces("application/json")
-    public String forgotpasswordemail(@PathParam("Uid") String id, @PathParam("Uemail") String useremail) throws SQLException, IOException {
+    public String forgotpasswordemail(@PathParam("Uemail") String useremail) throws SQLException, IOException {
         try {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select * from USER_INFO where user_id='" + id + "' and email='" + useremail + "'";
+            String sql = "select * from USER_INFO where U_ACTIVE='TRUE' and email='" + useremail + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -191,7 +191,7 @@ public class Gamereservation {
                 obj.accumulate("Timestmap", timenow);
                 String PASSWORD = rs.getString("PASSWORD");
                  String USER_ID = rs.getString("USER_ID");
-                String EMAIL = rs.getString("EMAIL");
+                String EMAIL = rs.getString("Email");
                 obj.accumulate("UserName", USER_ID);
                 obj.accumulate("EMAIL", EMAIL);
                 obj.accumulate("Password", PASSWORD);
@@ -201,7 +201,6 @@ public class Gamereservation {
                 obj.accumulate("Status", status);
                 Long timenow = timestamp();
                 obj.accumulate("Timestmap", timenow);
-                obj.accumulate("UserName", id);
                 obj.accumulate("Email", useremail);
                 obj.accumulate("Message", "no column or row found");
 
@@ -213,7 +212,6 @@ public class Gamereservation {
         }catch (SQLException|ClassNotFoundException e) {
             obj.accumulate("Status", "ERROR");
             obj.accumulate("TimeStamp", timestamp());
-            obj.accumulate("UserName", id);
             obj.accumulate("Email", useremail);
               obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
 
@@ -224,15 +222,15 @@ public class Gamereservation {
         return obj.toString();
     }
 
-    @Path("forgotpasswordphone&{Uid}&{phonenumber}")
+    @Path("forgotpasswordphone&{phonenumber}")
     @GET
     @Produces("application/json")
-    public String forgotpasswordphone(@PathParam("Uid") String id, @PathParam("phonenumber") String number) throws SQLException, IOException {
+    public String forgotpasswordphone(@PathParam("phonenumber") String number) throws SQLException, IOException {
         try {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select * from USER_INFO where user_id='" + id + "' and PHONENUMBER='" + number + "'";
+            String sql = "select * from USER_INFO where U_ACTIVE='TRUE' and PHONENUMBER='" + number + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -251,7 +249,6 @@ public class Gamereservation {
                 obj.accumulate("Status", status);
                 Long timenow = timestamp();
                 obj.accumulate("Timestmap", timenow);
-                obj.accumulate("UserName", id);
                 obj.accumulate("PhoneNumber", number);
                 obj.accumulate("Message", "no column or row found");
 
@@ -263,7 +260,6 @@ public class Gamereservation {
         } catch (SQLException|ClassNotFoundException e) {
             obj.accumulate("Status", "ERROR");
             obj.accumulate("TimeStamp", timestamp());
-            obj.accumulate("UserName", id);
             obj.accumulate("PhoneNumber", number);
             obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
 
@@ -282,11 +278,12 @@ public class Gamereservation {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql1 = "UPDATE user_info SET password = '"+pass+"' WHERE user_id = '"+userid+"'";
+            String sql1 = "UPDATE user_info SET password = '"+pass+"' WHERE U_ACTIVE='TRUE' and user_id = '"+userid+"'";
             ResultSet rs1 = s.grewal(sql1);
             rs1.close();
+          
            
-          String sql = "select * from USER_INFO where user_id='" + userid + "'and password='"+pass+"'";
+          String sql = "select * from USER_INFO where U_ACTIVE='TRUE' and user_id='" + userid + "'and password='"+pass+"'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -301,7 +298,7 @@ public class Gamereservation {
                 Date DOB = rs.getDate("DOB");
                 String newDate = dateFormatter(DOB);
                 String USER_ROLE=rs.getString("USER_ROLE");
-                 String ACTIVE=rs.getString("ACTIVE");
+                 String ACTIVE=rs.getString("U_ACTIVE");
                 obj.accumulate("UserName", USER_ID);
                 obj.accumulate("FirstName", FIRSTNAME);
                 obj.accumulate("LastName", LASTNAME);
@@ -310,7 +307,7 @@ public class Gamereservation {
                 obj.accumulate("Dob",newDate );
                 obj.accumulate("Password", pass);
                  obj.accumulate("Role", USER_ROLE);
-                obj.accumulate("Active", ACTIVE);
+                obj.accumulate("UserActive", ACTIVE);
 
             } else {
                 status = "wrong";
@@ -339,6 +336,7 @@ public class Gamereservation {
 
         return obj.toString();
     }
+    
     @Path("viewallcategories")
     @GET
     @Produces("application/json")
@@ -346,7 +344,7 @@ public class Gamereservation {
         try {
             create_connection s = new create_connection();
             s.getConnection();
-            String sql = "select * from CATEGORIES where active='TRUE'";
+            String sql = "select * from CATEGORIES where C_ACTIVE='TRUE'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -396,7 +394,7 @@ public class Gamereservation {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select CATEGORIES.CAT_ID,CATEGORIES.SUBCAT_ID,CATEGORIES.CAT_NAME,CATEGORIES.ACTIVE,CATEGORIES.CAT_DESCRIPTION,games.GAME_DESCRIPTION,games.game_name,games.game_id from categories right join game_category on game_category.CAT_ID=categories.CAT_ID right join games on games.GAME_ID=game_category.GAME_ID where active ='TRUE' and CAT_NAME='" + cat_name + "'";
+            String sql = "select CATEGORIES.CAT_ID,CATEGORIES.SUBCAT_ID,CATEGORIES.CAT_NAME,CATEGORIES.C_ACTIVE,CATEGORIES.CAT_DESCRIPTION,games.GAME_DESCRIPTION,games.game_name,games.game_id,games.G_active from categories right join game_category on game_category.CAT_ID=categories.CAT_ID right join games on games.GAME_ID=game_category.GAME_ID where C_ACTIVE ='TRUE' and CAT_NAME='" + cat_name + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -405,12 +403,12 @@ public class Gamereservation {
                 obj.accumulate("Timestmap", timenow);
                 String CategoryId = rs.getString("CAT_ID");
                 String subcat_id = rs.getString("SUBCAT_ID");
-                String active = rs.getString("ACTIVE");
+                String active = rs.getString("C_ACTIVE");
                 String CAT_DESCRIPTION = rs.getString("CAT_DESCRIPTION");
                 obj.accumulate("CategoryName", cat_name);
                 obj.accumulate("CategoryId", CategoryId);
                 obj.accumulate("SubCategoryId", subcat_id);
-                obj.accumulate("Active", active);
+                obj.accumulate("CategoryActive", active);
                 obj.accumulate("CategoryDescription", CAT_DESCRIPTION);
                 rs.beforeFirst();
                 JSONArray ary = new JSONArray();
@@ -418,10 +416,12 @@ public class Gamereservation {
                     String DESCRIPTION = rs.getString("GAME_DESCRIPTION");
                     String GAME_NAME = rs.getString("GAME_NAME");
                     String GAME_ID = rs.getString("GAME_ID");
+                    String G_ACTIVE = rs.getString("G_ACTIVE");
                     JSONObject newobj = new JSONObject();
                     newobj.accumulate("GameDescription", DESCRIPTION);
                     newobj.accumulate("GameName", GAME_NAME);
                     newobj.accumulate("GameId", GAME_ID);
+                    newobj.accumulate("GameActive", G_ACTIVE);
                     ary.add(newobj);
                     newobj.clear();
                 }
@@ -455,7 +455,7 @@ public class Gamereservation {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select games.GAME_DESCRIPTION,games.GAME_ID,games.GAME_NAME,games.ACTIVE,GAMESTATIONS.gs_id,GAMESTATIONS.loc_id,GAMESTATIONS.gs_name from games right join GAME_GAMESTAION on GAME_GAMESTAION.GAME_ID=games.GAME_ID right join GAMESTATIONS on GAME_GAMESTAION.GS_ID=GAMESTATIONS.GS_ID where active ='TRUE' and games.game_name='" + name + "'";
+            String sql = "select games.GAME_DESCRIPTION,games.GAME_ID,games.GAME_NAME,games.G_ACTIVE,GAMESTATIONS.gs_id,GAMESTATIONS.loc_id,GAMESTATIONS.gs_name,GAMESTATIONS.GS_ACTIVE,locations.loc_name ,locations.L_ACTIVE from games right join GAME_GAMESTAION on GAME_GAMESTAION.GAME_ID=games.GAME_ID right join GAMESTATIONS on GAME_GAMESTAION.GS_ID=GAMESTATIONS.GS_ID right join locations on locations.loc_id=gamestations.LOC_ID where games.G_active ='TRUE' and games.game_name='"+name+"'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -463,22 +463,28 @@ public class Gamereservation {
                 Long timenow = timestamp();
                 obj.accumulate("Timestmap", timenow);
                 String GAME_ID = rs.getString("GAME_ID");
-                String ACTIVE = rs.getString("ACTIVE");
+                String G_ACTIVE = rs.getString("G_ACTIVE");
                 String GAME_DESCRIPTION = rs.getString("GAME_DESCRIPTION");
                 obj.accumulate("GameId", GAME_ID);
                 obj.accumulate("GameName", name);
-                obj.accumulate("Active", ACTIVE);
+                obj.accumulate("GameActive", G_ACTIVE);
                 obj.accumulate("GameDescription", GAME_DESCRIPTION);
                 rs.beforeFirst();
                 JSONArray ary = new JSONArray();
                 while (rs.next()) {
                     String GS_ID = rs.getString("GS_ID");
                     String LOC_ID = rs.getString("LOC_ID");
+                    String GS_ACTIVE = rs.getString("GS_ACTIVE");
+                    String L_ACTIVE = rs.getString("L_ACTIVE");
+                    String LOC_NAME = rs.getString("LOC_NAME");
                     String GS_NAME = rs.getString("GS_NAME");
                     JSONObject newobj = new JSONObject();
                     newobj.accumulate("GameStationId", GS_ID);
                     newobj.accumulate("GameStation", GS_NAME);
+                    newobj.accumulate("GameStationActive", GS_ACTIVE);
+                    newobj.accumulate("LocationActive", L_ACTIVE);
                     newobj.accumulate("LocationId", LOC_ID);
+                    newobj.accumulate("LocationName", LOC_NAME);
                     ary.add(newobj);
                     newobj.clear();
                 }
@@ -513,7 +519,7 @@ public class Gamereservation {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select GAMESTATIONS.gs_id,GAMESTATIONS.loc_id,GAMESTATIONS.gs_name,LOCATIONS.LOC_NAME, LOCATIONS.CITY,LOCATIONS.POSTALCODE,LOCATIONS.BUILDING_NUMBER,LOCATIONS.COUNTRY,gamestations.ACTIVE from GAMESTATIONS right join LOCATIONS on LOCATIONS.LOC_ID=GAMESTATIONS.LOC_ID  where GAMESTATIONS.active ='TRUE' and GAMESTATIONS.active ='TRUE'  and GAMESTATIONS.GS_NAME='" + name + "'";
+            String sql = "select GAMESTATIONS.gs_id,GAMESTATIONS.loc_id,GAMESTATIONS.gs_name,LOCATIONS.LOC_NAME, LOCATIONS.CITY,LOCATIONS.POSTALCODE,LOCATIONS.BUILDING_NUMBER,LOCATIONS.COUNTRY,gamestations.GS_ACTIVE,locations.l_active from GAMESTATIONS right join LOCATIONS on LOCATIONS.LOC_ID=GAMESTATIONS.LOC_ID  where GAMESTATIONS.gs_active ='TRUE'  and GAMESTATIONS.GS_NAME='" + name + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -525,11 +531,15 @@ public class Gamereservation {
                     obj.accumulate("GameStation", name);
                     String LOC_NAME = rs.getString("LOC_NAME");
                     String LOC_ID = rs.getString("LOC_ID");
+                    String GS_ACTIVE = rs.getString("GS_ACTIVE");
+                    String L_ACTIVE = rs.getString("L_ACTIVE");
                     String CITY = rs.getString("CITY");
                     String POSTALCODE = rs.getString("POSTALCODE");
                     String BUILDING_NUMBER = rs.getString("BUILDING_NUMBER");
                     String COUNTRY = rs.getString("COUNTRY");
+                    obj.accumulate("GameStationActive", GS_ACTIVE);
                     obj.accumulate("LocationId", LOC_ID);
+                     obj.accumulate("LocationActive", L_ACTIVE);
                     obj.accumulate("LocationName", LOC_NAME);
                     obj.accumulate("City", CITY);
                     obj.accumulate("Postalcode", POSTALCODE);
@@ -556,15 +566,73 @@ public class Gamereservation {
         System.out.println("Goodbye!");
         return obj.toString();
     }
- @Path("viewlocation&{name}")
+ @Path("viewlocations")
     @GET
     @Produces("application/json")
-    public String viewlocation(@PathParam("name") String name) throws SQLException, IOException {
+    public String viewlocation() throws SQLException, IOException {
         try {
             create_connection s = new create_connection();
             s.getConnection();
 
-            String sql = "select * from locations where loc_name='" + name + "'";
+            String sql = "select * from locations where l_active ='TRUE'";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                JSONArray ary=new JSONArray();
+                rs.beforeFirst();
+                while(rs.next()){
+                    JSONObject obj1=new JSONObject();
+                    String LOC_ID = rs.getString("LOC_ID");
+                    String L_ACTIVE = rs.getString("L_ACTIVE");
+                    String LOC_NAME = rs.getString("LOC_NAME");
+                    String CITY = rs.getString("CITY");                    
+                    String POSTALCODE = rs.getString("POSTALCODE");
+                    String BUILDING_NUMBER = rs.getString("BUILDING_NUMBER");
+                    String COUNTRY = rs.getString("COUNTRY");
+                    obj1.accumulate("LocationId", LOC_ID);
+                    obj1.accumulate("LocationActive", L_ACTIVE);
+                    obj1.accumulate("LocationName", LOC_NAME);
+                    obj1.accumulate("City", CITY);
+                    obj1.accumulate("Postalcode", POSTALCODE);
+                    obj1.accumulate("BuildingNumber", BUILDING_NUMBER);
+                    obj1.accumulate("Country", COUNTRY);
+                    ary.add(obj1);
+                    obj1.clear();
+                }
+                obj.accumulate("Locations", ary);
+            } else {
+                status = "wrong";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                
+                obj.accumulate("Message", "no column or row found");
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "ERROR");
+            obj.accumulate("TimeStamp", timestamp());
+
+            obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+        return obj.toString();
+    }
+    @Path("viewlocationgamestation&{name}")
+    @GET
+    @Produces("application/json")
+    public String viewlocationgamestation(@PathParam("name") String name) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+
+            String sql = "select locations.LOC_ID,locations.LOC_NAME,locations.CITY,locations.POSTALCODE,locations.BUILDING_NUMBER,locations.COUNTRY,GAMESTATIONS.GS_NAME from GAMESTATIONS right join LOCATIONS on LOCATIONS.loc_id=gamestations.LOC_ID where gamestations.GS_ACTIVE='TRUE' and gamestations.GS_NAME='" + name + "'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -573,11 +641,13 @@ public class Gamereservation {
                 obj.accumulate("Timestmap", timenow);
                     String LOC_ID = rs.getString("LOC_ID");
                     String CITY = rs.getString("CITY");
+                     String LOC_NAME = rs.getString("LOC_NAME");
                     String POSTALCODE = rs.getString("POSTALCODE");
                     String BUILDING_NUMBER = rs.getString("BUILDING_NUMBER");
                     String COUNTRY = rs.getString("COUNTRY");
+                     obj.accumulate("GameSation", name);
                     obj.accumulate("LocationId", LOC_ID);
-                    obj.accumulate("LocationName", name);
+                    obj.accumulate("LocationName", LOC_NAME);
                     obj.accumulate("City", CITY);
                     obj.accumulate("Postalcode", POSTALCODE);
                     obj.accumulate("BuildingNumber", BUILDING_NUMBER);
@@ -588,7 +658,7 @@ public class Gamereservation {
                 obj.accumulate("Status", status);
                 Long timenow = timestamp();
                 obj.accumulate("Timestmap", timenow);
-                obj.accumulate("LocationName", name);
+                obj.accumulate("GameSation", name);
                 obj.accumulate("Message", "no column or row found");
             }
             rs.close();
@@ -604,12 +674,299 @@ public class Gamereservation {
         System.out.println("Goodbye!");
         return obj.toString();
     }
+    @Path("viewlocation&{name}")
+    @GET
+    @Produces("application/json")
+    public String viewlocation(@PathParam("name") String name) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+
+            String sql = "select * from locations where l_active='TRUE' and loc_name='" + name + "'";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                    String LOC_ID = rs.getString("LOC_ID");
+                    String CITY = rs.getString("CITY");
+                    String LOC_NAME = rs.getString("LOC_NAME");
+                    String POSTALCODE = rs.getString("POSTALCODE");
+                    String BUILDING_NUMBER = rs.getString("BUILDING_NUMBER");
+                    String COUNTRY = rs.getString("COUNTRY");
+                    String L_ACTIVE = rs.getString("L_ACTIVE");
+                    obj.accumulate("LocationId", LOC_ID);
+                    obj.accumulate("LocationName", LOC_NAME);
+                    obj.accumulate("City", CITY);
+                    obj.accumulate("Postalcode", POSTALCODE);
+                    obj.accumulate("BuildingNumber", BUILDING_NUMBER);
+                    obj.accumulate("Country", COUNTRY);
+                    obj.accumulate("LocationActive", L_ACTIVE);
+                   
+            } else {
+                status = "wrong";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("GameSation", name);
+                obj.accumulate("Message", "no column or row found");
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "ERROR");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("GameStation", name);
+            obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+        return obj.toString();
+    }
+     @Path("updateprofile&{Uname}&{Ulastn}&{Uemail}&{Unumber}&{Uid}&{Upass}")
+    @GET
+    @Produces("application/json")
+    public String updateprofile(@PathParam("Uname") String name,@PathParam("Uid") String id,@PathParam("Upass") String pass, @PathParam("Ulastn") String lastn,  @PathParam("Uemail") String email, @PathParam("Unumber") String number,@PathParam("datebirth") String birthdate) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+            String sql1 = "update USER_INFO set firstname='" + name + "',lastname= '" + lastn + "',email='"+email+" ',phonenumber= '" + number + "' where u_active='TRUE' and user_id='"+id+"' and password='"+pass+"'";
+            ResultSet rs1 = s.grewal(sql1);
+            rs1.close();
+            String sql = "select * from USER_INFO where u_active='TRUE' and user_id='"+id+"'";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                String USER_ID=rs.getString("USER_ID");
+                String FIRSTNAME=rs.getString("FIRSTNAME");
+                 String LASTNAME=rs.getString("LASTNAME");
+                 String EMAIL=rs.getString("EMAIL");
+                 Date DOB = rs.getDate("DOB");
+                String newDate = dateFormatter(DOB);
+                 long PHONENUMBER=rs.getLong("PHONENUMBER");
+                 String PASSWORD=rs.getString("PASSWORD");
+                 String USER_ROLE=rs.getString("USER_ROLE");
+                 String ACTIVE=rs.getString("u_ACTIVE");
+                        
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("UserName", USER_ID);
+                obj.accumulate("FirstName", FIRSTNAME);
+                obj.accumulate("LastName", LASTNAME);
+                obj.accumulate("Email", EMAIL);
+                obj.accumulate("PhoneNumber", PHONENUMBER);
+                obj.accumulate("Dob",newDate);
+                obj.accumulate("Password", PASSWORD);
+                obj.accumulate("Role", USER_ROLE);
+                obj.accumulate("UserActive", ACTIVE);
+
+            } else {
+                status = "wrong";
+
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("UserName", id);
+                obj.accumulate("Message", "no column or row found");
+
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "Eroor");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("UserName", id);
+            obj.accumulate("Message",e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+
+        return obj.toString();
+    }
+    @Path("viewreservations&{Uid}")
+    @GET
+    @Produces("application/json")
+    public String viewreservation(@PathParam("Uid") String id) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+
+            String sql = "select reservations.R_DATE ,reservations.USER_ID,reservations.GS_ID,reservations.TS_ID,reservations.R_ACTIVE, timeslots.start_time,timeslots.end_time,gamestations.gs_name,gamestations.GS_ACTIVE from reservations right join timeslots on reservations.TS_ID=timeslots.TS_ID right join gamestations on reservations.GS_ID=gamestations.GS_ID where reservations.R_ACTIVE='TRUE' and reservations.user_id='" + id + "'";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                String U_ID = rs.getString("USER_ID");
+                obj.accumulate("UserName", U_ID);
+                JSONArray ary=new JSONArray();
+                while(rs.next()){
+                    JSONObject obj1=new JSONObject();
+                String name = rs.getString("GS_NAME");
+                String START_TIME = rs.getString("START_TIME");
+                String END_TIME = rs.getString("END_TIME");
+                String GS_ID = rs.getString("GS_ID");
+                 String R_DATE = rs.getString("R_DATE");
+                String R_ACTIVE = rs.getString("R_ACTIVE");
+                String GS_ACTIVE = rs.getString("GS_ACTIVE");
+                obj1.accumulate("ReservationActive", R_ACTIVE);
+                obj1.accumulate("ReservationDate", R_DATE);
+                obj1.accumulate("GameStationActive", GS_ACTIVE);
+                obj1.accumulate("GameStation", name);
+                obj1.accumulate("StartTime", START_TIME);
+                obj1.accumulate("EndTime", END_TIME);
+                obj1.accumulate("GamestationId", GS_ID);
+                ary.add(obj1);
+                obj1.clear();
+                }
+                obj.accumulate("Reservations", ary);
+            } else {
+                status = "wrong";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("UserName", id);
+                obj.accumulate("Message", "no column or row found");
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "ERROR");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("UserName", id);
+            obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+        return obj.toString();
+    }
+    @Path("newreservations&{Rdate}&{Uid}&{GSid}&{TSid}")
+    @GET
+    @Produces("application/json")
+    public String newreservations(@PathParam("Rdate") String date,@PathParam("Uid") String id,@PathParam("GSid") int gsid,@PathParam("TSid") int tsid) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+
+            String sql1 = "INSERT INTO RESERVATIONS (R_DATE, USER_ID, GS_ID, TS_ID)  VALUES (TO_TIMESTAMP('"+date+"','DD-MM-yyyy HH24:MI:SS'), '"+id+"',"+ gsid+", "+tsid+")";
+            ResultSet rs1 = s.grewal(sql1);
+            rs1.close();
+            String sql="select * from Reservations where R_active ='TRUE' and user_id='"+id+"' and R_date =TO_TIMESTAMP('"+date+"','DD-MM-yyyy HH24:MI:SS')";
+            ResultSet rs=s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                String USER_ID = rs.getString("USER_ID");
+                String GS_ID = rs.getString("GS_ID");
+                String R_DATE = rs.getString("R_DATE");
+                String TS_ID = rs.getString("TS_ID");
+                String R_active = rs.getString("R_active");
+                obj.accumulate("UserName", USER_ID);
+                obj.accumulate("TimeSlotID", TS_ID);
+                obj.accumulate("ReservationDate", R_DATE);
+                obj.accumulate("ReservationActive", R_active);
+                obj.accumulate("GamestationId", GS_ID);
+            } else {
+                status = "wrong";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("UserName", id);
+                obj.accumulate("Message", "no column or row found");
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "ERROR");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("UserName", id);
+            obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+        return obj.toString();
+    }
+    @Path("viewavailability&{Gname}")
+    @GET
+    @Produces("application/json")
+    public String viewavailability(@PathParam("Gname") String name) throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+           
+            String sql = "select AVAILABILTY.TS_ID,AVAILABILTY.GS_ID,AVAILABILTY.A_ACTIVE ,GAMESTATIONS.GS_NAME ,GAMESTATIONS.gs_active,TIMESLOTS.t_active,TIMESLOTS.START_TIME,TIMESLOTS.END_TIME from AVAILABILTY right join gamestations on AVAILABILTY.gs_id=gamestations.GS_ID right join TIMESLOTS on TIMESLOTS.TS_ID=AVAILABILTY.ts_id where AVAILABILTY.A_ACTIVE='TRUE' and  gamestations.GS_NAME='"+name+"'";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                String GS_ID = rs.getString("GS_ID");
+                String GS_ACTIVE = rs.getString("GS_ACTIVE");
+                String GS_NAME = rs.getString("GS_NAME");
+                obj.accumulate("GameStation", GS_NAME);
+                obj.accumulate("GameStationID", GS_ID);
+                obj.accumulate("GameStationActive", GS_ACTIVE);
+                JSONArray ary=new JSONArray();
+                while(rs.next()){
+                    JSONObject obj1=new JSONObject();
+                String T_ACTIVE = rs.getString("T_ACTIVE");
+                String START_TIME = rs.getString("START_TIME");
+                String END_TIME = rs.getString("END_TIME");
+                obj1.accumulate("StartTime", START_TIME);
+                obj1.accumulate("EndTime", END_TIME);
+                obj1.accumulate("TimeslotActive", T_ACTIVE);
+                ary.add(obj1);
+                obj1.clear();
+                }
+                obj.accumulate("Avilablities", ary);
+            }else {
+                status = "wrong";
+
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("GameStation", name);
+                obj.accumulate("Message", "no column or row found");
+
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "Eroor");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("GameStation", name);
+            obj.accumulate("Message",e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+
+        return obj.toString();
+    }
+    
     public static Long timestamp() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         return timestamp.getTime();
     }
   public static String dateFormatter(Date d) {
         DateFormat df = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+        String dat = df.format(d);
+        return dat;
+    }
+  public static String timeFormatter(Date d) {
+        DateFormat df = new SimpleDateFormat("hh-mm-ss Am", Locale.ENGLISH);
         String dat = df.format(d);
         return dat;
     }
