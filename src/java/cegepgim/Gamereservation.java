@@ -619,10 +619,58 @@ public class Gamereservation {
         System.out.println("Goodbye!");
         return obj.toString();
     }
+    @Path("viewallgamestation")
+    @GET
+    @Produces("application/json")
+    public String viewallgamestation() throws SQLException, IOException {
+        try {
+            create_connection s = new create_connection();
+            s.getConnection();
+
+            String sql = "select * from GAMESTATIONS";
+            ResultSet rs = s.grewal(sql);
+            if (rs.next()) {
+                status = "ok";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                JSONArray ary=new JSONArray();
+                rs.beforeFirst();
+                while(rs.next()){
+                    JSONObject obj1=new JSONObject();
+                String GS_ID = rs.getString("GS_ID");
+                String GS_NAME = rs.getString("GS_NAME");
+                obj1.accumulate("GameStationId", GS_ID);
+                obj1.accumulate("GameStation", GS_NAME);
+                String LOC_ID = rs.getString("LOC_ID");
+                obj1.accumulate("LocationId", LOC_ID);
+                ary.add(obj1);
+                obj1.clear();
+                }
+                obj.accumulate("GameStations", ary);
+            } else {
+                status = "wrong";
+                obj.accumulate("Status", status);
+                Long timenow = timestamp();
+                obj.accumulate("Timestmap", timenow);
+                obj.accumulate("Message", "no column or row found");
+            }
+            rs.close();
+            s.closeConnection();
+            s.closeStmt();
+        } catch (SQLException|ClassNotFoundException e) {
+            obj.accumulate("Status", "ERROR");
+            obj.accumulate("TimeStamp", timestamp());
+            obj.accumulate("Message", "error occurred :-" +e.getLocalizedMessage());
+
+        }
+        System.out.println("Goodbye!");
+        return obj.toString();
+    }
  @Path("viewalllocations")
     @GET
     @Produces("application/json")
-    public String viewlocation() throws SQLException, IOException {
+    public String viewalllocations() throws SQLException, IOException {
         try {
             create_connection s = new create_connection();
             s.getConnection();
@@ -1015,15 +1063,16 @@ public class Gamereservation {
         System.out.println("Goodbye!");
         return obj.toString();
     }
-    @Path("viewavailability&{Gname}")
+     @Path("viewavailability&{GSname}&{TSstarttime}&{TSendtime}")
     @GET
     @Produces("application/json")
-    public String viewavailability(@PathParam("Gname") String name) throws SQLException, IOException {
+    
+    public String viewavailability(@PathParam("GSname") String name,@PathParam("TSstarttime") String starttime,@PathParam("TSendtime") String endtime) throws SQLException, IOException {
         try {
             create_connection s = new create_connection();
             s.getConnection();
            
-            String sql = "select AVAILABILTY.TS_ID,AVAILABILTY.GS_ID,AVAILABILTY.A_ACTIVE ,GAMESTATIONS.GS_NAME ,GAMESTATIONS.gs_active,TIMESLOTS.t_active,TIMESLOTS.START_TIME,TIMESLOTS.END_TIME from AVAILABILTY right join gamestations on AVAILABILTY.gs_id=gamestations.GS_ID right join TIMESLOTS on TIMESLOTS.TS_ID=AVAILABILTY.ts_id where AVAILABILTY.A_ACTIVE='TRUE' and  gamestations.GS_NAME='"+name+"'";
+            String sql = "select AVAILABILTY.TS_ID,AVAILABILTY.GS_ID,AVAILABILTY.A_ACTIVE ,GAMESTATIONS.GS_NAME ,GAMESTATIONS.gs_active,TIMESLOTS.t_active,TIMESLOTS.START_TIME,TIMESLOTS.END_TIME from AVAILABILTY right join gamestations on AVAILABILTY.gs_id=gamestations.GS_ID right join TIMESLOTS on TIMESLOTS.TS_ID=AVAILABILTY.ts_id where AVAILABILTY.A_ACTIVE='TRUE' and  gamestations.GS_NAME='"+name+"'  and START_TIME=TO_TIMESTAMP('"+starttime+"','HH:MI AM')and end_time=TO_TIMESTAMP('"+endtime+"','HH:MI AM')";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -1036,20 +1085,13 @@ public class Gamereservation {
                 obj.accumulate("GameStation", GS_NAME);
                 obj.accumulate("GameStationID", GS_ID);
                 obj.accumulate("GameStationActive", GS_ACTIVE);
-                JSONArray ary=new JSONArray();
-                rs.beforeFirst();
-                while(rs.next()){
-                    JSONObject obj1=new JSONObject();
                 String T_ACTIVE = rs.getString("T_ACTIVE");
                 String START_TIME = rs.getString("START_TIME");
                 String END_TIME = rs.getString("END_TIME");
-                obj1.accumulate("StartTime", START_TIME);
-                obj1.accumulate("EndTime", END_TIME);
-                obj1.accumulate("TimeslotActive", T_ACTIVE);
-                ary.add(obj1);
-                obj1.clear();
-                }
-                obj.accumulate("Avilablities", ary);
+                obj.accumulate("StartTime", START_TIME);
+                obj.accumulate("EndTime", END_TIME);
+                obj.accumulate("TimeslotActive", T_ACTIVE);
+                
             }else {
                 status = "wrong";
 
@@ -1057,7 +1099,7 @@ public class Gamereservation {
                 Long timenow = timestamp();
                 obj.accumulate("Timestmap", timenow);
                 obj.accumulate("GameStation", name);
-                obj.accumulate("Message", "no column or row found");
+                obj.accumulate("Message", "timeslot not available");
 
             }
             rs.close();
@@ -1075,6 +1117,7 @@ public class Gamereservation {
 
         return obj.toString();
     }
+     
      @Path("deactivateaccount&{Uid}&{Upass}")
     @GET
     @Produces("application/json")
