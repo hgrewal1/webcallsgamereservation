@@ -17,11 +17,11 @@ public class create_connection {
   Statement stmt = null;
     //JDBC driver name and database URL
      final String driverName = "oracle.jdbc.OracleDriver";
-     final String url = "jdbc:oracle:thin:@localhost:1521:XE" ;
+     final String url = "jdbc:oracle:thin:@144.217.163.57:1521:XE" ;
     
     // Database credentials
-     final String username = "grewal";
-     final String password = "cegepgim";
+     final String username = "proj2";
+     final String password = "project2pw";
 private  Connection con;
   public  Connection getConnection() throws ClassNotFoundException, SQLException {
      
