@@ -61,7 +61,7 @@ public class Gamereservation {
             String sql1 = "INSERT INTO USER_INFO (FIRSTNAME, LASTNAME, USER_ID, EMAIL, PHONENUMBER, PASSWORD,dob) VALUES ('" + name + "', '" + lastn + "', '" + id + "', '" + useremail + "', '" + number + "', '" + pass + "',TO_DATE('" + birthdate + "','DD-MM-YYYY'))";
             ResultSet rs1 = s.grewal(sql1);
             rs1.close();
-            String sql = "select * from USER_INFO where user_id='"+id+"'";
+            String sql = "select * from USER_INFO where user_id='"+id+"' and password='"+pass+"'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
@@ -619,7 +619,7 @@ public class Gamereservation {
         System.out.println("Goodbye!");
         return obj.toString();
     }
- @Path("viewlocations")
+ @Path("viewalllocations")
     @GET
     @Produces("application/json")
     public String viewlocation() throws SQLException, IOException {
@@ -788,7 +788,7 @@ public class Gamereservation {
             String sql1 = "update USER_INFO set firstname='" + name + "',lastname= '" + lastn + "',email='"+email+" ',phonenumber= '" + number + "' where u_active='TRUE' and user_id='"+id+"' and password='"+pass+"'";
             ResultSet rs1 = s.grewal(sql1);
             rs1.close();
-            String sql = "select * from USER_INFO where u_active='TRUE' and user_id='"+id+"'";
+            String sql = "select * from USER_INFO where u_active='TRUE' and user_id='"+id+"' and password='"+pass+"'";
             ResultSet rs = s.grewal(sql);
             if (rs.next()) {
                 status = "ok";
